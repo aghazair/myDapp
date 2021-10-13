@@ -1,3 +1,3 @@
 module.exports = {
-    publicPath: '/myDapp/'     
+    publicPath: process.env.NODE_ENV === 'production' ? '/mydapp/' : '/'
   }
