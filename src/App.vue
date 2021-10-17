@@ -109,11 +109,35 @@ const contractAddress = '0x0E600bC9850dc8C5b915F42988f6eBCBfd475fB3';
 const web3 = new Web3(window.web3.currentProvider);
 const myContract =  new web3.eth.Contract(ABI, contractAddress);
 
+
+
+function checkNetwork()
+{
+  
+
+  if((window.ethereum.networkVersion) != 3)
+  {
+    console.log(window.ethereum.networkVersion);
+    return false;
+  }
+  else
+    return true;
+}
 //check if account is changed in metamask
 window.ethereum.on('accountsChanged', function (accounts) {
   getAccount();
 
 });
+
+window.ethereum.on('chainChanged', (chainId) => {
+  if(chainId != 3)
+  {
+    alert("Please connect to Ropsten test network!");
+  }
+  window.location.reload();
+});
+
+window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
 
 export default {
   name: 'App',
@@ -218,13 +242,19 @@ async function getAccountDetail(myAddress)
 
 // get account info
   async function getAccount() {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-    document.getElementById("btn").innerText = "Connected";
-    document.getElementById("address").innerHTML = "Account Connected : "+account;
-    getAccountDetail(account);
-    
-    }
+
+      if(!checkNetwork())
+      {
+        alert("Connect to Ropsten Test Netowrk to use this DAPP!" );
+        return;
+      }
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const account = accounts[0];
+      document.getElementById("btn").innerText = "Connected";
+      document.getElementById("address").innerHTML = "Account Connected : "+account;
+      getAccountDetail(account);
+
+  }
 
 // unlock membership based on type 
  async function unLockMembershp(amount, memberType) 
